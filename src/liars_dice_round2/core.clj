@@ -1,12 +1,15 @@
 (ns liars-dice-round2.core
   (:require [clojure.test :refer :all])
-  (:use liars-dice-round2.core2 clojure.pprint))
+  (:use clojure.pprint))
 
 
 (def priors-file "priors.txt")
 (def grand-prior [10 10])
 (def prior-pseudosize 10)
-(def wilson-z 1.0)
+
+(def dices ["1" "2" "3" "4" "5" "*"])
+(def liar "liar")
+(def bets (for [n [1 2] d dices] (str n d)))
 
 (def new-state
   {
@@ -19,13 +22,27 @@
   (binding [*out* *err*]
     (apply println texts)))
 
-(defn wilson-upper-85 [positives negatives]
-  (let [n (+ negatives positives)
-        phat (/ positives n)
-        z wilson-z
-        zsquare (* z z)]
-    (/ (+ phat (/ zsquare (* 2 n)) (* z (Math/sqrt (+ (* (/ 1 n) phat (- 1 phat)) (/ zsquare (* 4 n n))))))
-       (+ 1 (/ zsquare n)))))
+(defn str-split [input re-delimiter]
+  (if (nil? input)
+    '()
+    (clojure.string/split input re-delimiter)))
+
+(defn action-join [actions]
+  (clojure.string/join "," (reverse actions)))
+
+(defn action-split [str-actions]
+  (if (empty? str-actions)
+    '()
+    (reverse (clojure.string/split str-actions #","))))
+
+(deftest actions-parser-test
+  (is (= "11,15,2*" (action-join '("2*" "15" "11"))))
+  (is (= '("2*" "15" "11") (action-split "11,15,2*"))))
+
+(defn get-possible-actions [last-bet-value]
+  (if (nil? last-bet-value) bets
+                            (cons liar (rest (drop-while #(not= last-bet-value %)
+                                                         bets)))))
 
 (defn MAP [positives negatives]
   (/ positives (+ positives negatives)))
@@ -69,7 +86,7 @@
        (+ wins losses (* k prior-wins) (* k prior-losses)))))
 
 (deftest prob-win-test
-  (is (= 2/13
+  (is (= 1/8
          (prob-win {:my-dice "*" :outcomes {:* {'("15") [10 100]}}} '("15")))))
 
 (defn choose-bet-action [state]
