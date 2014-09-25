@@ -1,14 +1,18 @@
-# liars-dice-round2
+# TheLiarsDiceAIRound2Bot
 
-A Clojure library designed to ... well, that part is up to you.
+Clojure Bot to participate in TheLiarsDiceAIContest
 
 ## Usage
 
-FIXME
+1. install [Leiningen](http://leiningen.org/) (maven for clojure)
+2. cd to project root folder
+3. run `lein uberjar` to compile a jar
+4. jar is in `target` folder
+
+I used [Cursive](https://cursiveclojure.com/) which I strongly recommend as a Clojure IDE
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Marat Zaynutdinov
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under Make Whatever You Want License.
